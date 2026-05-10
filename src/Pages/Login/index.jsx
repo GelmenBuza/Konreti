@@ -1,63 +1,40 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router";
+import {Link, useNavigate} from "react-router";
+import validateData from "../../utils/validation.js";
 
 
 export default function LoginPage () {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState({});
+    const [error, setErrors] = useState({});
     const navigate = useNavigate();
-
-    const checkData = () => {
-        const newErrors = {}
-        const emailRegEx = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/
-        const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/
-
-        if (!email) {
-            newErrors.email = 'Почта обязательна.';
-        }
-
-        if (!emailRegEx.test(email)) {
-            newErrors.email = 'Почты не существует.';
-        }
-
-        if (!password) {
-            newErrors.password = 'Пароль обязателен.';
-        }
-
-        if (!passwordRegEx.test(password)) {
-            newErrors.password = 'Не верный пароль.';
-        }
-
-        setError(newErrors);
-
-        return !newErrors;
-    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (checkData()) {
+        if (validateData(setErrors, {email, password})) {
             // Логика запроса на бэк
             const userId = 1
-            navigate(`/profile/${userId}`);
+            navigate(`/profile`);
         }
 
     }
 
     return (
         <div className="mainContainer">
-            <form onSubmit={() => handleSubmit(e)}>
-                <label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <form onSubmit={(e) => handleSubmit(e)}>
+                <label htmlFor="email">
+                    <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                     {!email && <span>Почта</span>}
                     {error.email && <span>{error.email}</span>}
                 </label>
-                <label htmlFor="">
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <label htmlFor="password">
+                    <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     {!password && <span>Пароль</span>}
                     {error.password && <span>{error.password}</span>}
                 </label>
+
+                <Link to="/registration">Нет аккаунта?</Link>
 
                 <button type="submit">Войти</button>
             </form>

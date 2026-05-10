@@ -11,10 +11,10 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" component={Login}/>
-                <Route path="/registration" component={Register}/>
-                <Route path="/profile/:userId" component={Profile}/>
-                <Route path="/board/:boardId" component={Board}/>
+                <Route path="/" element={Login}/>
+                <Route path="/registration" element={Register}/>
+                <Route path="/profile" element={Profile}/>
+                <Route path="/board/:boardId" element={Board}/>
             </Routes>
         </BrowserRouter>
     )
