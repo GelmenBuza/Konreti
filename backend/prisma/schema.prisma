@@ -19,6 +19,12 @@ model User {
   createdCards Card[]
 }
 
+model Sessions {
+  id        String   @id @default(uuid())
+  isActive  Boolean
+  createdAt DateTime @default(now())
+}
+
 model Board {
   id        String   @id @default(uuid())
   title     String
