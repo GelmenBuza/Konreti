@@ -1,4 +1,3 @@
-import './App.css'
 import {BrowserRouter, Routes, Route} from 'react-router'
 import Login from './Pages/Login'
 import Register from './Pages/Register'
@@ -11,10 +10,10 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={Login}/>
-                <Route path="/registration" element={Register}/>
-                <Route path="/profile" element={Profile}/>
-                <Route path="/board/:boardId" element={Board}/>
+                <Route path="/" element={<Login/>}/>
+                <Route path="/register" element={<Register/>}/>
+                <Route path="/profile" element={<Profile/>}/>
+                <Route path="/board/:boardId" element={<Board/>}/>
             </Routes>
         </BrowserRouter>
     )

@@ -221,3 +221,5 @@ const refreshToken = async (req: Request, res: Response) => {
 // const getMe = async (req: Request, res: Response) => {
 //     res.json({userId: req.userId})
 // }
+
+export {login, logout, refreshToken, register}
