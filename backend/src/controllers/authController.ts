@@ -2,14 +2,12 @@ import {Request, Response} from "express";
 import {prisma} from "../prismaClient.ts";
 import bcrypt from "bcrypt";
 import {createAccessToken, createRefreshToken, verifyToken} from "@/utils/jwt.ts";
-import {User} from "../../prisma/generated/client.ts";
-import jwt from "jsonwebtoken";
 
 const register = async (req: Request, res: Response) => {
     try {
-        const {email, password} = req.body as { email?: string; password?: string };
-        if (!email || !password) {
-            res.status(400).json({message: "email и password обязательны"});
+        const {email, password, fullName} = req.body as { email?: string; password?: string; fullName?: string };
+        if (!email || !password || !fullName) {
+            res.status(400).json({message: "email, password и fullName обязательны"});
             return;
         }
 
@@ -27,7 +25,7 @@ const register = async (req: Request, res: Response) => {
         const newUser = await prisma.user.create({
             data: {
                 email,
-                fullName: "user",
+                fullName,
                 hashedPassword: passwordHash,
             },
             select: {
@@ -35,20 +33,7 @@ const register = async (req: Request, res: Response) => {
             },
         });
 
-        const updatedUser = await prisma.user.update({
-            where: {id: newUser.id},
-            data: {
-                fullName: `user-${newUser.id}`,
-            },
-            select: {
-                id: true,
-                email: true,
-                fullName: true,
-                createdAt: true,
-            },
-        });
-
-        res.status(201).json({message: "User successfully created", user: updatedUser, error: null});
+        res.status(201).json({message: "User successfully created", error: null});
     } catch (error) {
         const {email} = req.body as { email?: string };
 
@@ -124,7 +109,7 @@ const login = async (req: Request, res: Response) => {
                 },
             });
 
-            if (!session.isActive) {
+            if (session && !session.isActive) {
                 res.status(403).json({message: "Forbidden."})
                 return;
             } else {
@@ -161,7 +146,7 @@ const login = async (req: Request, res: Response) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        res.json({message: "Логин успешен.", user, error: null})
+        res.status(201).json({message: "Логин успешен.", user, error: null})
     } catch (error) {
         console.error("Error in login:", error);
         res.status(500).json({message: "Internal server error"});
@@ -217,9 +202,5 @@ const refreshToken = async (req: Request, res: Response) => {
         res.status(500).json({message: "Internal server error"});
     }
 }
-
-// const getMe = async (req: Request, res: Response) => {
-//     res.json({userId: req.userId})
-// }
 
 export {login, logout, refreshToken, register}

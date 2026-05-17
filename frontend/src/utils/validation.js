@@ -1,8 +1,9 @@
-export default function validateData (setErrors, fields){
+export default function validateData(setErrors, fields, type='register') {
 
     const newErrors = {}
     const emailRegEx = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/
     const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/
+
 
     if (!fields.email) {
         newErrors.email = 'Почта обязательна.';
@@ -17,12 +18,18 @@ export default function validateData (setErrors, fields){
             newErrors.password = 'Пароль должен быть от 8 символов. Содержать как минимум одну строчную, одну заглавную букву и одну цифру.';
         } else {
             newErrors.password = 'Не верный пароль.';
-
         }
     }
 
-    if (!fields.confirmPassword || fields.confirmPassword !== fields.password) {
-        newErrors.confirmPassword = 'Пароли не совпадают.';
+
+    if (type !== 'login') {
+        if (!fields.fullName) {
+            newErrors.fullName = 'Никнейм обязателен.';
+        }
+
+        if (!fields.confirmPassword || fields.confirmPassword !== fields.password) {
+            newErrors.confirmPassword = 'Пароли не совпадают.';
+        }
     }
 
     setErrors(newErrors);

@@ -4,9 +4,9 @@ export const userStore = create((set, get) => ({
 
     // Сброс всех значений
     clearUser: () => set({ user: null }),
-    clearProjects: () => set({ projects: [] }),
+    // clearProjects: () => set({ projects: [] }),
 
     user: null,
-    setUser: (user) => set({ user: user }),
+    setUser: (newUser) => set({ user: newUser }),
     isLoggedIn: () => get().user !== null,
 }));

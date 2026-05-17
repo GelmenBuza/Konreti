@@ -27,7 +27,7 @@
     flex-direction: column;
 
     grid-template-columns: 1fr;
-    grid-template-rows: 30px 2fr 20px 1fr;
+    grid-template-rows: 60px 2fr 40px 1fr;
 
     align-self: center;
     justify-self: center;
@@ -35,7 +35,7 @@
     background-color: #C0C0C0;
     border-radius: 40px;
     width: 400px;
-    height: 530px;
+    min-height: 530px;
     padding: 20px;
     box-sizing: border-box;
 }
@@ -54,7 +54,7 @@
 .inputContainer {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 20px;
 
     grid-row: 2/3;
     align-self: center;
