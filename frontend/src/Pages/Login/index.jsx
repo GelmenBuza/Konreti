@@ -3,35 +3,41 @@ import { Link, useNavigate } from "react-router";
 import validateData from "../../utils/validation.js";
 import styles from "./style.module.css";
 import authApi from "../../api/authApi.js";
-import { userStore } from "../../stores/userStore.js";
-
+import { userStore } from "../../Stores/userStore.js";
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    const { setUser } = userStore();
+    const {setUser, user} = userStore();
+
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (validateData(setErrors, { email, password }, 'login')) {
-            const req = await authApi.login(email, password);
+            try {
+                const req = await authApi.login(email, password);
 
-            if (!req.error) {
-                if (req.user) {
-                    const newUser = req.user;
-                    console.log(newUser);
-                    setUser(newUser);
-                    navigate(`/profile`);
+                if (!req.error) {
+                    if (req.user) {
+                        const newUser = req.user;
+                        setUser(newUser);
+                        navigate(`/profile`);
+                    }
+                } else {
+                    setErrors({ global: req.error });
                 }
-            } else {
-                alert(req.message);
+            } catch (error) {
+                console.error("Login error:", error);
+                setErrors({ global: "Произошла ошибка при входе" });
             }
         }
     }
+
+
 
     return (
         <div className={styles.mainContainer}>
@@ -50,6 +56,7 @@ export default function LoginPage() {
                         {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
                     </label>
                 </div>
+                {errors.global && <span className={styles.errorMessage}>{errors.global}</span>}
                 <Link to="/register" className={styles.registrationLink}>Нет аккаунта?</Link>
 
                 <button type="submit" className={styles.submitButton}>Войти</button>
