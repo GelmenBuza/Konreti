@@ -17,6 +17,16 @@ const createBoard = async (req: Request, res: Response) => {
                 title,
                 description,
                 ownerId: userId,
+                columns: {
+                    createMany: {
+                        data: [
+                            { title: 'new', position: 1 },
+                            { title: 'working', position: 2 },
+                            { title: 'testing', position: 3 },
+                            { title: 'done', position: 4 }
+                        ]
+                    }
+                }
             },
         });
 

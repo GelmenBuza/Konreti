@@ -126,11 +126,18 @@
 
             width: 20%;
 
+            gap: 20px;
+
             .columnTitle {
                 font-size: 20px;
                 margin-bottom: 40px;
 
                 margin: 0;
+            }
+
+            .tasksContainer {
+                display: flex;
+                gap: 10;
             }
         }
 

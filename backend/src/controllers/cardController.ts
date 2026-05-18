@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { io } from "@/server.ts"
+import { io } from "@/server.ts";
 import { prisma } from "@/prismaClient.ts";
 
 const createCard = async (req: Request, res: Response) => {
@@ -32,8 +32,12 @@ const updateCard = async (req: Request, res: Response) => {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const cardId = req.body.id;
+        let cardId = req.params.id; // Changed from req.body.id to req.params.id
         const cardData = req.body;
+
+        if (Array.isArray(cardId)) {
+            cardId = cardId[0]
+        }
 
         const existingCard = await prisma.card.findUnique({
             where: { id: cardId }
@@ -63,7 +67,11 @@ const deleteCard = async (req: Request, res: Response) => {
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-        const cardId = req.body.id;
+        let cardId = req.params.id;
+
+        if (Array.isArray(cardId)) {
+            cardId = cardId[0]
+        }
 
         const existingCard = await prisma.card.findUnique({
             where: { id: cardId }
@@ -81,25 +89,24 @@ const deleteCard = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error deleting card', error);
         res.status(500).json({ message: "Internal server error" });
-
-
     }
 }
 
 const getCardsOnBoard = async (req: Request, res: Response) => {
     try {
-        const boardId = req.query.boardId as string;
-
+        let boardId = req.params.id;
         if (!boardId) {
             return res.status(400).json({ message: "Board ID is required" });
         }
 
-        // Получаем колонки по boardId
+        if (Array.isArray(boardId)) {
+            boardId = boardId[0]
+        }
+
         const columns = await prisma.column.findMany({
             where: { boardId: boardId }
         });
 
-        // Получаем карточки для каждой колонки
         let cards: any[] = [];
         for (const column of columns) {
             const columnCards = await prisma.card.findMany({

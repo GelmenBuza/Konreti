@@ -1,5 +1,5 @@
 import styles from "./style.module.css"
-import {useNavigate} from "react-router"
+import { useNavigate } from "react-router"
 
 
 
@@ -7,7 +7,6 @@ export default function BoardCard({ boardData }) {
     const navigate = useNavigate()
 
     const boardClick = () => {
-        console.log('da')
         navigate(`/board/${boardData.id}`)
     }
 
