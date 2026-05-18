@@ -1,0 +1,153 @@
+@import "../../styles/fonts.css";
+
+.mainContainer {
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+
+    display: grid;
+
+    grid-template-columns: 200px 1fr 200px;
+    grid-template-rows: 60px 1fr 60px;
+    gap: 10px;
+
+    font-family: "Comfortaa", sans-serif;
+    color: #000;
+
+    .logo {
+        grid-column: 1/2;
+        grid-row: 1/2;
+
+        margin: 0;
+
+        align-self: center;
+        justify-self: center;
+
+        font-family: 'Pacifico', sans-serif;
+        font-size: 48px;
+        color: #fff;
+    }
+}
+
+.board {
+
+    grid-column: 2/3;
+    grid-row: 2/3;
+
+    background-color: #D9D9D9;
+
+    display: grid;
+
+    grid-template-columns: 60px 1fr 60px;
+    grid-template-rows: 60px 1fr 60px;
+
+
+    .boardHeader {
+
+        grid-row: 1/2;
+        grid-column: 1/4;
+
+        align-self: center;
+
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 10px 20px;
+
+        .boardTitle {
+            font-size: 32px;
+        }
+
+
+        .btnContainer {
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+
+            .createTaskBtn {
+                width: 200px;
+                height: 30px;
+
+                border-radius: 10px;
+
+                color: #fff;
+                font-size: 20px;
+                text-align: center;
+
+                box-shadow: rgba(0, 0, 0, 0.25) 0 0 10px 5px;
+
+                background-color: #323131;
+
+                border: none;
+            }
+
+            .settingBtn {
+                border: none;
+                outline: none;
+                background-color: transparent;
+
+                cursor: pointer;
+
+                width: 20px;
+                height: 20px;
+
+                padding: 0;
+
+                img {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+
+        }
+    }
+
+    .columnContainer {
+
+        grid-column: 2/3;
+        grid-row: 2/3;
+
+        display: flex;
+
+        justify-content: space-between;
+
+
+        .column {
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+
+            padding: 15px;
+
+            width: 20%;
+
+            .columnTitle {
+                font-size: 20px;
+                margin-bottom: 40px;
+
+                margin: 0;
+            }
+        }
+
+        .new {
+            background-color: #DDAFAF;
+        }
+
+        .inWork {
+            background-color: #D8D096;
+        }
+
+        .testing {
+            background-color: #B6D7A5;
+        }
+
+        .done {
+            background-color: #C8B6D2;
+        }
+    }
+}

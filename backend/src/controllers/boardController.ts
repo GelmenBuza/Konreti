@@ -87,7 +87,7 @@ const deleteBoard = async (req: Request, res: Response) => {
         let boardId = req.params.id;
 
         if (Array.isArray(boardId)) {
-           boardId = boardId[0]
+            boardId = boardId[0]
         }
 
         const board = await prisma.board.findUnique({
@@ -115,4 +115,24 @@ const deleteBoard = async (req: Request, res: Response) => {
     }
 };
 
-export { createBoard, updateBoard, deleteBoard };
+const getBoardsByUser = async (req: Request, res: Response) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const boards = await prisma.board.findMany({
+            where: { ownerId: userId },
+        });
+
+        // io.emit('boards:fetched', boards);
+
+        res.status(200).json(boards);
+    } catch (error) {
+        console.error("Error fetching boards:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export { createBoard, updateBoard, deleteBoard, getBoardsByUser };

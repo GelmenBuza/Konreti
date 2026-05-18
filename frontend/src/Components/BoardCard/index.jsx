@@ -8,14 +8,14 @@ export default function BoardCard({ boardData }) {
 
     const boardClick = () => {
         console.log('da')
-        navigate(`/boards/${boardData.id}`)
+        navigate(`/board/${boardData.id}`)
     }
 
     return (
         <button className={styles.boardCard} onClick={() => boardClick()}>
             <div className={styles.textContainer}>
                 <h3 className={styles.title}>{boardData.title}</h3>
-                <p className={styles.description}>{boardData.shortDescription}</p>
+                <p className={styles.description}>{boardData.description}</p>
             </div>
             <img src={boardData.img} alt="board image" className={styles.image} />
         </button>

@@ -101,14 +101,10 @@ const UserBoardsSection = ({ user }) => {
 
     useEffect(() => {
         const fetchBoards = async () => {
-            // Логика запроса
-            setBoards([{
-                id: 1,
-                title: "Test",
-                shortDescription: "Test test test",
-                img: '',
-                createdAt: '2026-05-01 14:14:56.472'
-            }]);
+
+            const res = await boardApi.getBoardsByUser();
+
+            setBoards(res);
         };
         fetchBoards();
     }, [user]);
@@ -123,21 +119,23 @@ const UserBoardsSection = ({ user }) => {
 
     useEffect(() => {
         const searchTimeout = setTimeout(() => {
-            console.log(filter(search))
             setFilteredBoards(filter(search));
         }, 300);
         return () => clearTimeout(searchTimeout);
     }, [search]);
 
-    const handleCreateBoard = (e) => {
+    const handleCreateBoard = async (e) => {
         e.preventDefault();
 
         if (newBoardTitle && newBoardDescription) {
-            const req = boardApi.createBoard(newBoardTitle, newBoardDescription);
-            console.log(req)
-            setNewBoardTitle('');
-            setNewBoardDescription('Описание');
-            setModalErrors({});
+            const res = await boardApi.createBoard(newBoardTitle, newBoardDescription);
+            if (res) {
+                setBoards([...boards, res]);
+                setIsCreate(false);
+                setNewBoardTitle('');
+                setNewBoardDescription('Описание');
+                setModalErrors({});
+            }
         } else {
             setModalErrors({
                 global: "Введите название и описание доски",
@@ -152,7 +150,7 @@ const UserBoardsSection = ({ user }) => {
         setModalErrors({});
         setNewBoardTitle('');
         setNewBoardDescription('Описание');
-    } 
+    }
 
 
     return (
@@ -186,7 +184,7 @@ const UserBoardsSection = ({ user }) => {
             {isCreate &&
                 <div className={styles.createModal}>
                     <form className={styles.modalForm} onSubmit={(e) => handleCreateBoard(e)}>
-                        
+
                         <button className={styles.closeBtn} onClick={() => handleClose()}>
                             <img src={closeSVG} alt="close" />
                         </button>

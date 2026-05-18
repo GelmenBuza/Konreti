@@ -12,7 +12,7 @@ import authMiddleware from '@/middleware/authMiddleware.ts';
 import {prisma} from '@/prismaClient.ts'
 import authRoutes from "@/routes/authRoutes.ts";
 import boardRoutes from '@/routes/boardRoutes.ts'
-// import cardRoutes from '@/routes/cardRoutes.ts'
+import cardRoutes from '@/routes/cardRoutes.ts'
 import {registerBoardHandlers} from "@/soket/boardSocket.ts";
 import socketMiddleware from "@/middleware/socketMiddleware.ts";
 
@@ -55,7 +55,7 @@ app.get('/health', (_req: Request, res: Response) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/boards', authMiddleware, boardRoutes);
-// app.use('/api/cards', authMiddleware, cardRoutes);
+app.use('/api/cards', authMiddleware, cardRoutes);
 
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
