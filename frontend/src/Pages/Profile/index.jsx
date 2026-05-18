@@ -6,6 +6,9 @@ import styles from "./style.module.css"
 import searchSVG from "../../assets/search.svg";
 import checkSVG from "../../assets/check.svg";
 import editSVG from "../../assets/edit.svg";
+import plusSVG from "../../assets/plus.svg"
+import closeSVG from "../../assets/x.svg"
+import boardApi from "../../api/boardApi.js";
 
 const ProfileSection = ({ user }) => {
     const [isNameChange, setIsNameChange] = useState(false);
@@ -13,22 +16,20 @@ const ProfileSection = ({ user }) => {
     const [newName, setNewName] = useState("");
     const [newEmail, setNewEmail] = useState("");
 
-
     const confirmEdit = (field) => {
         switch (field) {
             case "email":
                 setIsEmailChange(false);
-                setNewEmail('')
+                setNewEmail('');
                 // Логику для запроса на бэк
                 break;
             case "name":
                 setIsNameChange(false);
-                setNewName('')
+                setNewName('');
                 // Логику для запроса на бэк
                 break;
         }
     }
-
 
     return (
         <div className={styles.profileSection}>
@@ -38,7 +39,7 @@ const ProfileSection = ({ user }) => {
                     {isNameChange ?
                         <>
                             <button onClick={() => confirmEdit('name')} className={styles.confirmButton}>
-                                <img src={checkSVG}  alt="confirm" />
+                                <img src={checkSVG} alt="confirm" />
                             </button>
                             <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} className={styles.inputField} />
                         </>
@@ -88,10 +89,15 @@ const AboutSection = () => {
 }
 
 const UserBoardsSection = ({ user }) => {
-    const [search, setSearch] = useState("")
-    const [boards, setBoards] = useState([])
-    const navigate = useNavigate();
-    let filteredBoards = ''
+    const [search, setSearch] = useState("");
+    const [boards, setBoards] = useState([]);
+    const [filteredBoards, setFilteredBoards] = useState([]);
+
+    const [isCreate, setIsCreate] = useState(false);
+    const [newBoardTitle, setNewBoardTitle] = useState("");
+    const [newBoardDescription, setNewBoardDescription] = useState("Описание");
+    const [modalErrors, setModalErrors] = useState({})
+
 
     useEffect(() => {
         const fetchBoards = async () => {
@@ -102,47 +108,117 @@ const UserBoardsSection = ({ user }) => {
                 shortDescription: "Test test test",
                 img: '',
                 createdAt: '2026-05-01 14:14:56.472'
-            }])
+            }]);
+        };
+        fetchBoards();
+    }, [user]);
+
+    const filter = (text) => {
+        if (text) {
+            console.log(boards)
+            return boards.filter(board => board.title.toLowerCase().includes(text.toLowerCase()));
         }
-        fetchBoards()
-    }, [user])
+        return boards;
+    }
 
     useEffect(() => {
-        filteredBoards = boards.filter(board => board.name.includes(title));
-    }, [search])
+        const searchTimeout = setTimeout(() => {
+            console.log(filter(search))
+            setFilteredBoards(filter(search));
+        }, 300);
+        return () => clearTimeout(searchTimeout);
+    }, [search]);
+
+    const handleCreateBoard = (e) => {
+        e.preventDefault();
+
+        if (newBoardTitle && newBoardDescription) {
+            const req = boardApi.createBoard(newBoardTitle, newBoardDescription);
+            console.log(req)
+            setNewBoardTitle('');
+            setNewBoardDescription('Описание');
+            setModalErrors({});
+        } else {
+            setModalErrors({
+                global: "Введите название и описание доски",
+            })
+        }
+
+    };
+
+    const handleClose = () => {
+        setIsCreate(false)
+
+        setModalErrors({});
+        setNewBoardTitle('');
+        setNewBoardDescription('Описание');
+    } 
+
 
     return (
-        <div className={styles.userBoard}>
-            <h2 className={styles.sectionsTitle}>Ваши доски</h2>
-            <label htmlFor="search" className={styles.searchLabel}>
-                <input id="search" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Найти доску" />
-                {!search && <img src={searchSVG} alt="search" />}
-            </label>
-            <div className={styles.boards}>
-                {
-                    search ?
-                        filteredBoards.map(board => (
-                            <BoardCard board={board} key={board.id} />
-                        ))
-                        :
-                        boards.map((board) => (
-                            <BoardCard boardData={board} key={board.id} />
-                        ))
-                }
+        <>
+
+            <div className={styles.userBoard}>
+                <h2 className={styles.sectionsTitle}>Ваши доски</h2>
+                <div className={styles.searchContainer}>
+
+                    <label htmlFor="search" className={styles.searchLabel}>
+                        <input id="search" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Найти доску" />
+                        {!search && <img src={searchSVG} alt="search" />}
+                    </label>
+
+                    <button className={styles.createBtn} onClick={() => setIsCreate(true)}><img src={plusSVG} alt="Create board" /></button>
+                </div>
+                <div className={styles.boards}>
+                    {
+                        search ?
+                            filteredBoards.map(board => (
+                                <BoardCard boardData={board} key={board.id} />
+                            ))
+                            :
+                            boards.map((board) => (
+                                <BoardCard boardData={board} key={board.id} />
+                            ))
+                    }
+                </div>
             </div>
-        </div>
+
+            {isCreate &&
+                <div className={styles.createModal}>
+                    <form className={styles.modalForm} onSubmit={(e) => handleCreateBoard(e)}>
+                        
+                        <button className={styles.closeBtn} onClick={() => handleClose()}>
+                            <img src={closeSVG} alt="close" />
+                        </button>
+
+
+                        <h2 className={styles.sectionsTitle}>Создание доски</h2>
+                        <div className={styles.modalInputContainer}>
+                            <label className={styles.modalInput}>
+                                <input type="text" placeholder="Название доски" value={newBoardTitle} onChange={(e) => setNewBoardTitle(e.target.value)} />
+                            </label>
+
+                            <label className={styles.modalInput}>
+                                <textarea type="text" value={newBoardDescription} onChange={(e) => setNewBoardDescription(e.target.value)} placeholder="Описание доски" />
+                            </label>
+                        </div>
+
+                        <button type="submit" className={styles.confirmButton}>Создать</button>
+                    </form>
+                </div>
+            }
+        </>
     )
 }
 
-
 export default function Profile() {
-    const { user } = userStore()
+    const { user } = userStore();
     const navigate = useNavigate();
 
     if (!user) {
-        navigate('/')
+        navigate('/');
+        return;
     }
-
 
     return (
         <div className={styles.mainContainer}>

@@ -1,6 +1,6 @@
 import styles from "./style.module.css"
 
-export default function BoardCard({boardData}) {
+export default function BoardCard({ boardData }) {
 
     return (
         <div className={styles.boardCard}>
@@ -8,7 +8,7 @@ export default function BoardCard({boardData}) {
                 <h3 className={styles.title}>{boardData.title}</h3>
                 <p className={styles.description}>{boardData.shortDescription}</p>
             </div>
-            <img src={boardData.img} alt="board image" className={styles.image}/>
+            <img src={boardData.img} alt="board image" className={styles.image} />
         </div>
     )
 }
