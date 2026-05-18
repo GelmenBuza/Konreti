@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3000/api/boards';
 
 const boardApi = {
     createBoard: async (title, description) => {
         try {
-            const response = await axios.post(`${API_URL}/boards`, { title, description });
+            const response = await axios.post(`${API_URL}/create`, { title, description }, { withCredentials: true });
             return response.data;
         } catch (error) {
             console.error('Error creating board:', error);
@@ -15,7 +15,7 @@ const boardApi = {
     
     updateBoard: async (boardId, title, description) => {
         try {
-            const response = await axios.put(`${API_URL}/boards/${boardId}`, { title, description });
+            const response = await axios.put(`${API_URL}/update/${boardId}`, { title, description }, { withCredentials: true });
             return response.data;
         } catch (error) {
             console.error('Error updating board:', error);
@@ -25,7 +25,7 @@ const boardApi = {
     
     deleteBoard: async (boardId) => {
         try {
-            await axios.delete(`${API_URL}/boards/${boardId}`);
+            await axios.delete(`${API_URL}/delete/${boardId}`, null, { withCredentials: true });
             return true;
         } catch (error) {
             console.error('Error deleting board:', error);
@@ -34,5 +34,5 @@ const boardApi = {
     },
 };
 
-export default {boardApi};
+export default boardApi;
 

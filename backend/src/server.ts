@@ -1,17 +1,17 @@
 import {env} from '@/config/env';
+import cookieParser from 'cookie-parser';
 import express, {Request, Response, NextFunction} from 'express';
 import {createServer} from 'http';
 import {Server as SocketServer} from 'socket.io';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import createHttpError from 'http-errors';
 import authMiddleware from '@/middleware/authMiddleware.ts';
 import {prisma} from '@/prismaClient.ts'
 import authRoutes from "@/routes/authRoutes.ts";
-// import boardRoutes from '@/routes/boardRoutes.ts'
+import boardRoutes from '@/routes/boardRoutes.ts'
 // import cardRoutes from '@/routes/cardRoutes.ts'
 import {registerBoardHandlers} from "@/soket/boardSocket.ts";
 import socketMiddleware from "@/middleware/socketMiddleware.ts";
@@ -41,10 +41,10 @@ const limiter = rateLimit({
 // Middleware
 app.use(helmet());
 app.use(compression());
-app.use(cors({origin: env.FRONTEND_URL, credentials: true}));
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
+app.use(cors({origin: env.FRONTEND_URL, credentials: true}));
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 app.use(limiter);
 
 // Health
@@ -54,7 +54,7 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
-// app.use('/api/boards', authMiddleware, boardRoutes);
+app.use('/api/boards', authMiddleware, boardRoutes);
 // app.use('/api/cards', authMiddleware, cardRoutes);
 
 

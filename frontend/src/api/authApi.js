@@ -16,7 +16,7 @@ const authApi = {
     },
     login: async (email, password) => {
         try {
-            const response = await axios.post(`${API_URL}/login`, { email, password });
+            const response = await axios.post(`${API_URL}/login`, { email, password }, { withCredentials: true });
             return response.data;
         } catch (error) {
             console.error("Error in login:", error);
@@ -26,7 +26,7 @@ const authApi = {
 
     logout: async () => {
         try {
-            const response = await axios.post(`${API_URL}/logout`);
+            const response = await axios.post(`${API_URL}/logout`, null, { withCredentials: true });
             return response.data;
         } catch (error) {
             console.error("Error in logout:", error);
