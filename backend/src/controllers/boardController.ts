@@ -145,4 +145,64 @@ const getBoardsByUser = async (req: Request, res: Response) => {
     }
 };
 
-export { createBoard, updateBoard, deleteBoard, getBoardsByUser };
+const getColumnsByBoardId = async (req: Request, res: Response) => {
+    try {
+        let boardId = req.params.id;
+
+        if (!boardId) {
+            return res.status(400).json({ message: "Board id is missing" });
+        }
+
+        if (Array.isArray(boardId)) {
+            boardId = boardId[0]
+        }
+
+        const columns = await prisma.column.findMany({
+            where: { boardId },
+        });
+
+        io.emit('columns:fetched', columns);
+
+        res.status(200).json(columns);
+    } catch (error) {
+        console.error("Error fetching columns:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+const getBoardById = async (req: Request, res: Response) => {
+    try {
+        let boardId = req.params.id;
+
+        if (!boardId) {
+            return res.status(400).json({ message: "Board id is missing" });
+        }
+
+        if (Array.isArray(boardId)) {
+            boardId = boardId[0]
+        }
+
+        const board = await prisma.board.findUnique({
+            where: { id: boardId },
+            select: {
+                id: true,
+                title: true,
+                description: true
+            }
+        });
+
+        if (!board) {
+            return res.status(404).json({ message: "Board not found" });
+        }
+
+        io.emit('board:fetched', board);
+
+        res.status(200).json(board);
+    } catch (error) {
+        console.error("Error fetching board:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export { createBoard, updateBoard, deleteBoard, getBoardsByUser, getColumnsByBoardId, getBoardById };
+

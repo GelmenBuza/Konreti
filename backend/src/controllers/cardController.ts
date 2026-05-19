@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { io } from "@/server.ts";
 import { prisma } from "@/prismaClient.ts";
+import { error } from 'console';
 
 const createCard = async (req: Request, res: Response) => {
     try {
@@ -10,13 +11,23 @@ const createCard = async (req: Request, res: Response) => {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const cardData = req.body;
+        const { columnId, title, description } = req.body;
+
+        if (!columnId || !title || !description) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        const position = 1;
         const newCard = await prisma.card.create({
             data: {
-                ...cardData,
+                columnId,
+                title,
+                description,
+                position,
+                status: 'new',
                 createdBy: userId
             }
-        })
+        });
         io.emit('card:created', newCard);
         res.status(201).json(newCard);
     } catch (error) {
@@ -92,6 +103,53 @@ const deleteCard = async (req: Request, res: Response) => {
     }
 }
 
+const moveCard = async (req: Request, res: Response) => {
+    try {
+        let cardId = req.params.id;
+        const newColumnId = req.body.newColumnId;
+        const newPosition = req.body.newPosition;
+
+        if (!cardId || !newColumnId || newPosition === undefined) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        if (Array.isArray(cardId)) {
+            cardId = cardId[0]
+        }
+
+        const cardData = await prisma.card.update({
+            where: { id: cardId },
+            data: {
+                columnId: newColumnId,
+                position: newPosition,
+            },
+            select: {
+                columnId: true,
+                title: true,
+                description: true,
+                status: true,
+                position: true
+            }
+        });
+
+        if (!cardData) {
+            return res.status(404).json({ message: "Card not found" });
+        }
+
+        const updatedCardData = {
+            ...cardData,
+            columnId: newColumnId,
+            position: newPosition
+        };
+
+        io.emit('card:dataUpdated', updatedCardData);
+        res.status(200).json({ message: "Card moved", error: null });
+    } catch (error) {
+        console.error('Error getting card data', error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 const getCardsOnBoard = async (req: Request, res: Response) => {
     try {
         let boardId = req.params.id;
@@ -125,4 +183,4 @@ const getCardsOnBoard = async (req: Request, res: Response) => {
     }
 };
 
-export { createCard, updateCard, deleteCard, getCardsOnBoard };
+export { createCard, updateCard, deleteCard, moveCard, getCardsOnBoard };
