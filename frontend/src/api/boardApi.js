@@ -42,7 +42,28 @@ const boardApi = {
             throw new Error('Internal server error', error);
         }
     },
+
+    getColumnsByBoardId: async (boardId) => {
+        try {
+            const response = await axios.get(`${API_URL}/columns/${boardId}`, { withCredentials: true });
+            return response.data;
+        } catch (error) {
+            console.error('Error getting columns by board id:', error);
+            throw new Error('Internal server error', error);
+        }
+    },
+
+    getBoardById: async (boardId) => {
+        try {
+            const response = await axios.get(`${API_URL}/${boardId}`, { withCredentials: true });
+            return response.data;
+        } catch (error) {
+            console.error('Error getting borad by id:', error);
+            throw new Error('Internal server error', error);
+        }
+    },
 };
 
 export default boardApi;
+
 

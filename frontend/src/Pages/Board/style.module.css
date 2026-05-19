@@ -128,6 +128,8 @@
 
             gap: 20px;
 
+            min-height: 400px;
+
             .columnTitle {
                 font-size: 20px;
                 margin-bottom: 40px;
@@ -137,7 +139,13 @@
 
             .tasksContainer {
                 display: flex;
-                gap: 10;
+                
+                flex-direction: column;
+
+                height: 100%;
+                width: 100%;
+
+                gap: 10px;
             }
         }
 
